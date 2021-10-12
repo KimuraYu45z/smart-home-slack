@@ -6,9 +6,11 @@ pub mod wol;
 
 fn main() {
     let mac: &str="18:C0:4D:94:06:7F";
-    println!("Mac Validity : ",wol::mac_validate(mac));
-    if mac_validate(mac){
-        println!("MacAddress : ",wol::convert_mac_address(mac));
+    let validity=wol::mac_validate(mac);
+    println!("Mac Validity : {}",validity);
+    if wol::mac_validate(mac){
+        let mac_byte=wol::convert_mac_address(mac);
+        println!("MacAddress : {:?}",mac_byte);
     }
     
 }
