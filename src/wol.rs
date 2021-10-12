@@ -1,5 +1,4 @@
 use regex::Regex;
-extern crate wake_on_lan;
 use wake_on_lan::*;
 
 pub fn mac_validate(str_mac:&str)->bool{
