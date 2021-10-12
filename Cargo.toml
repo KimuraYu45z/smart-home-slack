@@ -8,4 +8,5 @@ edition = "2018"
 [dependencies]
 reqwest = "*"
 ws = "*"
-wake-on-lan = "*"
+wake-on-lan = "0.2.0"
+regex = "1.5.4"
