@@ -18,17 +18,19 @@ pub mod command;
 
 #[tokio::main]
 async fn main() {
-    let file = File::open("/home/rq5273/.smart-home-slack/token.json").unwrap();
+    let file = File::open("C:/Users/rq527/.smart-home-slack/token.json").unwrap();
     let reader = BufReader::new(file);
     let token_json:serde_json::Value = serde_json::from_reader(reader).unwrap();
     let slack_token=token_json["xapp"].as_str().unwrap();
+
+
     let ws_url=slack::get_websocket_url(slack_token.to_string()).await;
     
+
+
     if ws_url["ok"].as_bool().unwrap(){
         println!("url: {}",ws_url["url"].as_str().unwrap());
-        slack::start2(ws_url["url"].as_str().unwrap().to_string()+"&debug_reconnects=true");
-        // let msg=slack::start2(ws_url["url"].as_str().unwrap().to_string()+"&debug_reconnects=true");
-        // println!("msg:{:?}",msg);
+        slack::ws_connect(ws_url["url"].as_str().unwrap());
     }
     
 

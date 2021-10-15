@@ -1,5 +1,5 @@
-use ws::{connect, CloseCode};
-use websocket::{ClientBuilder, OwnedMessage};
+use websocket::{ClientBuilder, Message};
+
 
 pub async fn get_websocket_url(slack_token: String) -> serde_json::Value {
     let client = reqwest::Client::new();
@@ -11,28 +11,20 @@ pub async fn get_websocket_url(slack_token: String) -> serde_json::Value {
         )
         .send()
         .await.unwrap();
-
+    
     let responsetext= response.text().await.unwrap();
+    println!("{}",responsetext);
     let responsejson:serde_json::Value=serde_json::from_str(&responsetext).unwrap();
+    
     return responsejson
 }
 
-pub async fn start(websocket_url: String) {
-    connect(websocket_url, |out| {
-        out.send("Hello WebSocket").unwrap();
-        
-        move |msg| {
-            println!("receive");
-            println!("Got message: {}", msg);
-            out.close(CloseCode::Normal)
-        }
-    })
-    .unwrap()
-}
 
-pub fn start2(websocket_url: String)->OwnedMessage{
-    let client = ClientBuilder::new(&websocket_url).unwrap().connect_insecure().unwrap();
-    let (mut receiver, sender) = client.split().unwrap();
-    let msg=receiver.recv_message().unwrap();
-    return msg
+pub fn ws_connect(websocket_url: &str)->(){
+    let mut client = ClientBuilder::new(websocket_url)
+        .unwrap()
+        .connect_secure(None)
+        .unwrap();
+    let msg=client.recv_message().unwrap();
+    println!("{:?}",msg);
 }
