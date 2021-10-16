@@ -5,11 +5,6 @@ extern crate wake_on_lan;
 extern crate websocket;
 
 
-use std::fs::File;
-use std::io::BufReader;
-
-
-
 pub mod slack;
 pub mod wol;
 pub mod command;
@@ -18,23 +13,12 @@ pub mod command;
 
 #[tokio::main]
 async fn main() {
-    let file = File::open("C:/Users/rq527/.smart-home-slack/token.json").unwrap();
-    let reader = BufReader::new(file);
-    let token_json:serde_json::Value = serde_json::from_reader(reader).unwrap();
-    let slack_token=token_json["xapp"].as_str().unwrap();
+    let token_json_path:&str="C:/Users/rq527/.smart-home-slack/token.json";
 
+    let ws_json=slack::get_websocket_url(token_json_path).await.unwrap();
+    let ws_url=ws_json["url"].as_str().unwrap();
 
-    let ws_url=slack::get_websocket_url(slack_token.to_string()).await;
-    
-
-
-    if ws_url["ok"].as_bool().unwrap(){
-        println!("url: {}",ws_url["url"].as_str().unwrap());
-        slack::ws_connect(ws_url["url"].as_str().unwrap());
-    }
-    
-
-
+    slack::slack_run(ws_url);
 
     // let mac: &str = "18:C0:4D:94:06:7F";
 
