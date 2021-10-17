@@ -6,7 +6,6 @@ extern crate websocket;
 
 
 pub mod slack;
-pub mod command;
 
 
 
