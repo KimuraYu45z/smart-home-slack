@@ -1,3 +1,4 @@
+pub mod wol;
 
 use std::fs::File;
 use std::io::BufReader;
@@ -30,6 +31,10 @@ pub async fn get_websocket_url(token_json_path: &str) -> Result<serde_json::Valu
     }
 }
 
+
+
+
+
 pub fn slack_run(ws_url:&str){
     let mut client = ClientBuilder::new(ws_url)
         .unwrap()
@@ -51,11 +56,47 @@ pub fn slack_run(ws_url:&str){
                 }
                 else{
                     let msg_:String=String::from_utf8(msg.take_payload()).unwrap();
-                    println!("receive : {:?}",msg_);
                     let msg_json:serde_json::Value=serde_json::from_str(&msg_).unwrap();
                     if msg_json["envelope_id"].as_str()!=None{
                         let reply=Message::text(msg_);
                         client.send_message(&reply).unwrap();
+                        let text=&msg_json["payload"]["event"]["text"].as_str().unwrap();
+                        println!("{}",text);
+                        let text_vec:Vec<&str>=text.split(" ").collect();
+                        // 以下message受信時動作
+                        if text_vec[0]=="rust"{
+                            if text_vec[1]=="close"{
+                                match client.shutdown(){
+                                    Ok(())=>{
+                                        connection=false;
+                                    }
+                                    Err(error)=>{
+                                        println!("{}",error);
+                                        connection=false;
+                                    }
+                                }
+                            }else if text_vec[1]=="wol"{
+                                let mac: &str = text_vec[2];
+                                match wol::convert_mac_address(mac) {
+                                    Ok(mac_address) => {
+                                        match wol::wake_on_lan(mac_address){
+                                            Ok(())=>{
+                                                println!("Send magic packet to {}",&mac)
+                                            }
+                                            Err(error)=>{
+                                                println!("Couldn't send magic packet {}",error)
+                                            }
+                                        }
+                                    }
+                                    Err(_) => {
+                                        println!("Invalid mac address.");
+                                    }
+                                }
+                            }
+                        }
+
+                    }else{
+                        println!("receive : {:?}",msg_);
                     }
                 }
             }

@@ -6,7 +6,6 @@ extern crate websocket;
 
 
 pub mod slack;
-pub mod wol;
 pub mod command;
 
 
@@ -20,14 +19,6 @@ async fn main() {
 
     slack::slack_run(ws_url);
 
-    // let mac: &str = "18:C0:4D:94:06:7F";
 
-    // match wol::convert_mac_address(mac) {
-    //     Ok(mac_address) => {
-    //         println!("Mac address : {:?}", mac_address);
-    //     }
-    //     Err(_) => {
-    //         println!("Invalid mac address.");
-    //     }
-    // }
 }
+
