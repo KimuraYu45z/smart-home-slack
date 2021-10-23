@@ -11,5 +11,7 @@ websocket = "*"
 wake-on-lan = "0.2.0"
 regex = "1.5.4"
 hex = "0.4.3"
-tokio = {version="*", features = ["full"]}
+serde = { version="*", features = ["derive"] }
 serde_json = "*"
+thiserror = "*"
+tokio = { version="*", features = ["full"] }
